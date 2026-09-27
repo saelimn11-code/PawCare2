@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodCheck</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Kanit:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --card-soft: #f8fafc;
+            --text: #0f172a;
+            --muted: #64748b;
+            --muted-2: #475569;
+            --line: #e2e8f0;
+            --green-50: #ecfdf5;
+            --green-100: #d1fae5;
+            --green-500: #10b981;
+            --green-600: #059669;
+            --green-700: #047857;
+            --green-900: #022c22;
+            --amber-400: #fbbf24;
+            --amber-500: #f59e0b;
+            --red-500: #ef4444;
+            --shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            margin: 0;
+            min-height: 100%;
+            font-family: "Prompt", "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        body {
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        button, select, input {
+            font: inherit;
+        }
+
+        .app-shell {
+            width: min(1380px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 0 0 32px;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 1px 0 rgba(15, 23, 42, 0.03);
+        }
+
+        .topbar-inner {
+            width: min(1380px, calc(100% - 32px));
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 72px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #10b981, #14b8a6);
+            display: grid;
+            place-items: center;
+            color: white;
+            box-shadow: 0 12px 24px rgba(16, 185, 129, 0.22);
+            font-weight: 800;
+            font-size: 1.15rem;
+        }
+
+        .brand-text {
+            font-family: "Kanit", "Prompt", sans-serif;
+            font-size: clamp(1.5rem, 2vw, 2.1rem);
+            color: #0f172a;
+            letter-spacing: -0.04em;
+            font-weight: 700;
+        }
+
+        .brand-sub {
+            display: inline-flex;
+            align-items: center;
+            font-size: 10px;
+            color: var(--green-700);
+            background: var(--green-50);
+            border: 1px solid #bbf7d0;
+            padding: 2px 8px;
+            border-radius: 8px;
+            margin-left: 6px;
+            font-weight: 600;
+            vertical-align: middle;
+        }
+
+        .topbar-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5d0a7, #c084fc);
+            border: 2px solid rgba(255,255,255,0.9);
+            box-shadow: 0 10px 20px rgba(148, 163, 184, 0.2);
+        }
+
+        .compare-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            border: 0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+        }
+
+        .compare-pill .count {
+            width: 22px;
+            height: 22px;
+            display: grid;
+            place-items: center;
+            font-size: 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.9);
+            color: #047857;
+            font-weight: 700;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: minmax(0, 1.75fr) minmax(280px, 0.8fr);
+            gap: 18px;
+            padding-top: 20px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+        }
+
+        .product-panel {
+            padding: 18px 18px 22px;
+        }
+
+        .compare-panel {
+            padding: 18px 16px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #062d2f 0%, #0a4e4d 34%, #062e2b 100%);
+            border-radius: 30px;
+            padding: 28px 24px 22px;
+            color: white;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 18px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 20px 34px rgba(5, 26, 29, 0.26);
+        }
+
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.1);
+            filter: blur(20px);
+        }
+
+        .hero::before {
+            right: -90px;
+            bottom: -70px;
+        }
+
+        .hero::after {
+            left: 35%;
+            top: -120px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 780px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(18, 107, 103, 0.35);
+            border: 1px solid rgba(142, 222, 205, 0.3);
+            color: #e5fff9;
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-family: "Kanit", "Prompt", sans-serif;
+            font-size: clamp(2rem, 3vw, 3.2rem);
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            color: white;
+        }
+
+        .hero p {
+            margin: 10px 0 0;
+            color: rgba(255,255,255,0.72);
+            font-size: 14px;
+            max-width: 720px;
+        }
+
+        .hero-search {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .hero-search .icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1.05rem;
+        }
+
+        .hero-search input {
+            width: 100%;
+            border: 0;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.96);
+            color: var(--text);
+            padding: 16px 46px 16px 46px;
+            outline: none;
+            font-size: 0.97rem;
+            box-shadow: 0 18px 28px rgba(15, 23, 42, 0.14);
+        }
+
+        .quick-search {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+            color: rgba(255,255,255,0.82);
+            font-size: 12px;
+        }
+
+        .quick-search button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.08);
+            color: white;
+            border-radius: 10px;
+            padding: 6px 10px;
+            cursor: default;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .quick-search button.active {
+            background: rgba(255,255,255,0.18);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 8px 18px rgba(6, 48, 52, 0.18);
+        }
+
+        .quick-count {
+            min-width: 24px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.28);
+            border: 1px solid rgba(255,255,255,0.12);
+            font-size: 11px;
+            font-weight: 700;
+            color: #ecfeff;
+            padding: 0 7px;
+        }
+
+        .toolbar {
+            margin-top: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-chip-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-chip {
+            border: 1px solid var(--line);
+            background: #f8fafc;
+            color: var(--muted-2);
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .filter-chip.active {
+            background: #ecfdf5;
+            border-color: #a7f3d0;
+            color: #047857;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+        }
+
+        .input-shell {
+            display: flex;
+            align-items: center;
+            min-height: 46px;
+            border: 1px solid var(--line);
+            background: #f8fafc;
+            border-radius: 12px;
+            overflow: hidden;
+            min-width: 220px;
+        }
+
+        .input-shell select,
+        .input-shell input {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: transparent;
+            color: var(--text);
+            padding: 0 12px;
+            outline: none;
+        }
+
+        .search-btn,
+        .load-more-btn {
+            cursor: pointer;
+            border: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+            padding: 12px 16px;
+            font-weight: 700;
+            box-shadow: 0 14px 24px rgba(16, 185, 129, 0.2);
+        }
+
+        .load-more-btn {
+            width: auto;
+            min-width: 150px;
+            margin-top: 14px;
+            margin-bottom: 8px;
+        }
+
+        .sort-meta {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        #error {
+            display: none;
+            margin: 8px 0 14px;
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            background: rgba(254, 242, 242, 0.9);
+            color: #991b1b;
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .product-card {
+            background: var(--card);
+            border-radius: 22px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 320px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+        }
+
+        .thumb {
+            position: relative;
+            height: 190px;
+            background: #ffffff;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .thumb img {
+            width: 86%;
+            height: 84%;
+            object-fit: contain;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 18px;
+            filter: saturate(1.06) contrast(1.08);
+            transition: transform 0.2s ease;
+        }
+
+        .product-card:hover .thumb img {
+            transform: scale(1.02);
+        }
+
+        .card-body {
+            padding: 14px 14px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .card-brand {
+            font-size: 11px;
+            color: var(--green-700);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .card-body h3 {
+            margin: 0;
+            font-size: 1.02rem;
+            line-height: 1.3;
+            font-weight: 700;
+            color: #0f172a;
+            min-height: 42px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card-body .meta {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .card-stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 2px;
+        }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            font-size: 11px;
+            color: var(--muted-2);
+            padding: 8px 6px;
+            font-weight: 700;
+        }
+
+        .stat-pill .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .stat-pill:nth-child(2) .dot {
+            background: #f59e0b;
+        }
+
+        .stat-pill:nth-child(3) .dot {
+            background: #ef4444;
+        }
+
+        .detail-link {
+            width: 100%;
+            border: 0;
+            background: #f8fafc;
+            color: var(--text);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            border: 1px solid var(--line);
+        }
+
+        .detail-link.active {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #fff;
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 12px 20px rgba(16, 185, 129, 0.14);
+        }
+
+        .compare-panel .compare-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .compare-panel h3 {
+            margin: 0;
+            font-family: "Kanit", "Prompt", sans-serif;
+            font-size: 1.6rem;
+            letter-spacing: -0.04em;
+        }
+
+        .compare-counter {
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            min-width: 40px;
+            padding: 8px 10px;
+            text-align: center;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .compare-list {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .compare-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 8px 10px;
+        }
+
+        .compare-item-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .compare-thumb {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .compare-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #ffffff;
+            border-radius: 8px;
+            filter: saturate(1.04) contrast(1.05);
+        }
+
+        .compare-name {
+            min-width: 0;
+        }
+
+        .compare-name strong {
+            display: block;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .compare-name small {
+            display: block;
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .remove-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 0;
+            background: #e2e8f0;
+            cursor: pointer;
+            color: #334155;
+            font-size: 1rem;
+        }
+
+        .compare-add {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 12px;
+            border: 1px dashed var(--line);
+            border-radius: 14px;
+            background: #f8fafc;
+            color: var(--muted-2);
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .compare-table {
+            overflow: hidden;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: white;
+        }
+
+        .compare-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .compare-table th,
+        .compare-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--line);
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .compare-table th {
+            background: #f8fafc;
+            color: var(--muted-2);
+            font-weight: 700;
+        }
+
+        .compare-table .label {
+            text-align: left;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .good {
+            color: #047857;
+            font-weight: 700;
+        }
+
+        .compare-toast {
+            position: fixed;
+            right: 22px;
+            bottom: 26px;
+            z-index: 1001;
+            background: rgba(15, 23, 42, 0.94);
+            color: white;
+            border-radius: 14px;
+            padding: 12px 14px;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+            min-width: 220px;
+        }
+
+        .compare-toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .compare-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 26px;
+        }
+
+        .compare-modal.show {
+            display: flex;
+        }
+
+        .compare-modal-content {
+            width: min(1260px, 94vw);
+            max-height: 85vh;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 38px;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.10), 0 24px 44px rgba(9, 38, 36, 0.2);
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .compare-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 30px 28px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.16);
+            background: linear-gradient(180deg, #0e7b5d 0%, #0d6950 100%);
+        }
+
+        .compare-count-emphasis {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            height: 42px;
+            padding: 0 14px;
+            border-radius: 14px;
+            background: linear-gradient(180deg, #0c5d45 0%, #083f31 100%);
+            color: #ffffff;
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1;
+            box-shadow: 0 12px 22px rgba(5, 48, 40, 0.2);
+            border: 1px solid rgba(4, 40, 30, 0.22);
+        }
+
+        .compare-modal-header h2 {
+            margin: 0;
+            font-size: clamp(2.3rem, 2.4vw, 3.2rem);
+            font-family: "Kanit", "Prompt", sans-serif;
+            letter-spacing: -0.04em;
+            color: #f3fffb;
+            font-weight: 700;
+            text-shadow: 0 2px 2px rgba(0,0,0,0.06);
+        }
+
+        .compare-modal-close {
+            width: 48px;
+            height: 48px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.88);
+            color: #0f172a;
+            font-size: 2.3rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+            box-shadow: 0 10px 16px rgba(0,0,0,0.08);
+        }
+
+        .compare-modal-close:hover {
+            transform: rotate(90deg);
+            background: #cbd5e1;
+        }
+
+        .compare-modal-body {
+            padding: 18px 26px 14px;
+            overflow: auto;
+        }
+
+        .compare-modal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .compare-modal-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 18px;
+            padding: 14px 16px;
+            min-height: 100px;
+            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+            backdrop-filter: blur(8px);
+        }
+
+        .compare-modal-item-main {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .compare-modal-item img {
+            width: 86px;
+            height: 86px;
+            object-fit: contain;
+            border-radius: 14px;
+            background: #ffffff;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            flex-shrink: 0;
+            padding: 6px;
+            filter: saturate(1.06) contrast(1.08);
+            box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.02);
+        }
+
+        .compare-modal-name {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .compare-modal-name strong {
+            display: block;
+            font-size: 1.05rem;
+            color: #f1fff9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .compare-modal-name small {
+            display: block;
+            color: rgba(241,255,249,0.78);
+            font-size: 0.74rem;
+            margin-top: 2px;
+        }
+
+        .compare-card-remove {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 0;
+            background: rgba(255, 255, 255, 0.82);
+            color: #0f172a;
+            font-size: 1.4rem;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.13);
+        }
+
+        .compare-modal-name {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .compare-modal-name strong {
+            display: block;
+            font-size: 12px;
+            color: #0f172a;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.35;
+        }
+
+        .compare-modal-name small {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        .compare-modal-table {
+            overflow: hidden;
+            border-radius: 18px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        .compare-modal-table table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        .compare-modal-table th,
+        .compare-modal-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            text-align: center;
+            font-size: 1.02rem;
+            vertical-align: middle;
+            color: #0f172a;
+        }
+
+        .compare-modal-table th {
+            background: rgba(12, 105, 88, 0.12);
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .compare-modal-table .label {
+            text-align: left;
+            font-weight: 700;
+            color: #0f172a;
+            min-width: 120px;
+        }
+
+        .compare-modal-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .compare-better {
+            color: #0f172a;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .compare-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #19b66e;
+            color: white;
+            display: inline-grid;
+            place-items: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(25, 182, 110, 0.2);
+        }
+
+        .compare-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 18px 26px 28px;
+            background: rgba(25, 110, 94, 0.82);
+        }
+
+        .compare-modal-footer button {
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(255,255,255,0.18);
+            color: #effff9;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: 0.96rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+        }
+
+        #compareMoreBtn {
+            background: linear-gradient(180deg, #2fbe95 0%, #178865 100%);
+            border-color: rgba(13, 99, 76, 0.28);
+            color: white;
+            box-shadow: 0 10px 18px rgba(18, 126, 93, 0.24);
+        }
+
+        #clearCompareBtn {
+            background: rgba(255, 255, 255, 0.16);
+            color: #0f172a;
+            border-color: rgba(15, 23, 42, 0.12);
+        }
+
+        .clear-confirm-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.46);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            padding: 20px;
+        }
+
+        .clear-confirm-modal.show {
+            display: flex;
+        }
+
+        .clear-confirm-dialog {
+            width: min(420px, 90vw);
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 24px;
+            box-shadow: 0 22px 38px rgba(15, 23, 42, 0.18);
+            padding: 24px 22px 18px;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+
+        .clear-confirm-dialog h3 {
+            margin: 0 0 10px;
+            font-size: 1.7rem;
+            color: #0f172a;
+            font-family: "Kanit", "Prompt", sans-serif;
+            letter-spacing: -0.03em;
+        }
+
+        .clear-confirm-dialog p {
+            margin: 0 0 20px;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #475569;
+        }
+
+        .clear-confirm-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .clear-confirm-actions button {
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-weight: 700;
+            font-size: 0.96rem;
+            cursor: pointer;
+        }
+
+        .clear-confirm-actions .confirm-clear {
+            background: linear-gradient(180deg, #1ab97a 0%, #0c7f5f 100%);
+            color: white;
+            box-shadow: 0 10px 18px rgba(18, 126, 93, 0.2);
+        }
+
+        .clear-confirm-actions .cancel-clear {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .compare-empty {
+            text-align: center;
+            color: var(--muted-2);
+            font-weight: 600;
+            background: #f8fafc;
+            border: 1px dashed var(--line);
+            border-radius: 16px;
+            padding: 30px 18px;
+        }
+
+        .compare-toast strong {
+            display: block;
+            margin-bottom: 3px;
+            font-size: 13px;
+        }
+
+        .compare-toast span {
+            font-size: 11px;
+            color: rgba(255,255,255,0.72);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: min(480px, 96vw);
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 24px 52px rgba(15, 23, 42, 0.24);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            overflow: hidden;
+            animation: popupShow 0.22s ease;
+        }
+
+        @keyframes popupShow {
+            from { transform: scale(0.96); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 12px;
+            top: 10px;
+            width: 36px;
+            height: 36px;
+            border: 0;
+            border-radius: 50%;
+            background: #f1f5f9;
+            cursor: pointer;
+            font-size: 1.35rem;
+            color: #334155;
+        }
+
+        .modal-body {
+            padding: 22px 22px 18px;
+            position: relative;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-width: 220px;
+            height: 220px;
+            object-fit: contain;
+            border-radius: 18px;
+            margin: 8px auto 18px;
+            display: block;
+            background: linear-gradient(135deg, #ecfdf5, #dbeafe);
+            border: 1px solid rgba(148,163,184,0.12);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .modal-image:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .modal-body h2 {
+            margin: 0 0 18px;
+            font-size: clamp(1.7rem, 3vw, 2.2rem);
+            line-height: 1.15;
+            color: #0f172a;
+            font-family: "Kanit", "Prompt", sans-serif;
+            letter-spacing: -0.04em;
+            text-align: center;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .inline-editable {
+            cursor: text;
+            outline: none;
+            border-radius: 8px;
+            padding: 4px 8px;
+            transition: background 0.15s ease, box-shadow 0.15s ease;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-width: 100%;
+            display: inline-block;
+            vertical-align: top;
+            max-height: 160px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(15, 118, 110, 0.6) transparent;
+            padding-right: 10px;
+        }
+
+        .inline-editable::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .inline-editable::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .inline-editable::-webkit-scrollbar-thumb {
+            background: rgba(15, 118, 110, 0.5);
+            border-radius: 999px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+
+        .inline-editable:focus {
+            background: #f8fafc;
+            box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.35);
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 0.93rem;
+            color: #334155;
+        }
+
+        .meta-row strong {
+            color: #0f172a;
+        }
+
+        .custom-image-preview-wrap {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin: 8px 0 14px;
+        }
+
+        .custom-image-preview-wrap.hidden {
+            display: none;
+        }
+
+        .custom-image-preview {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #eff6ff, #ecfdf5);
+            border: 1px solid rgba(148,163,184,0.15);
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 18px;
+        }
+
+        .modal-action {
+            border: 0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .modal-action.primary {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+        }
+
+        .modal-action.success {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .modal-action.ghost {
+            background: #f8fafc;
+            color: #334155;
+            border: 1px solid var(--line);
+        }
+
+        @media (max-width: 980px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .topbar-inner,
+            .app-shell {
+                width: min(100% - 20px, 1380px);
+            }
+
+            .hero {
+                padding: 22px 16px 18px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar-right {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .input-shell {
+                min-width: 0;
+                width: 100%;
+            }
+
+            .food-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="topbar-inner">
+                <div class="brand">
+                    <div class="brand-mark" aria-hidden="true">F</div>
+                    <div class="brand-text">FoodCheck <span class="brand-sub">Healthy</span></div>
+                </div>
+
+                <div class="topbar-meta">
+                    <button class="compare-pill" id="headerComparePill" type="button">เปรียบเทียบ <span class="count" id="headerCompareCount">0</span></button>
+                    <div class="avatar" aria-label="avatar"></div>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <section class="panel product-panel">
+                <div class="hero">
+                    <div class="hero-content">
+                        <div class="hero-badge">Healthy picks • nutrition compare</div>
+                        <h1>ค้นหาผลิตภัณฑ์อาหารที่เหมาะกับตัวคุณ</h1>
+                        <p>สำรวจสินค้าจากแบรนด์ชั้นนำหลายรายพร้อมข้อมูลโภชนาการจริง ดูสัดส่วน ลดปริมาณน้ำตาล และเปรียบเทียบก่อนตัดสินใจซื้อ</p>
+
+                        <div class="hero-search">
+                            <span class="icon">⌕</span>
+                            <input id="searchInput" type="text" placeholder="ค้นหาชื่อสินค้า/แบรนด์..." aria-label="ค้นหาผลิตภัณฑ์" />
+                        </div>
+
+                        <div class="quick-search" aria-label="หมวดหมู่อาหาร">
+                            <button type="button" data-category="all" data-label="ทั้งหมด" class="active" disabled aria-disabled="true">ทั้งหมด <span class="quick-count">0</span></button>
+                            <button type="button" data-category="chips" data-label="ชิป" disabled aria-disabled="true">ชิป <span class="quick-count">0</span></button>
+                            <button type="button" data-category="milk" data-label="นม" disabled aria-disabled="true">นม <span class="quick-count">0</span></button>
+                            <button type="button" data-category="bread" data-label="ขนมปัง" disabled aria-disabled="true">ขนมปัง <span class="quick-count">0</span></button>
+                            <button type="button" data-category="juice" data-label="น้ำผลไม้" disabled aria-disabled="true">น้ำผลไม้ <span class="quick-count">0</span></button>
+                            <button type="button" data-category="rice" data-label="ข้าว" disabled aria-disabled="true">ข้าว <span class="quick-count">0</span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="filter-chip-wrap">
+                        <button type="button" class="filter-chip active" data-filter="all">ทั้งหมด</button>
+                        <button type="button" class="filter-chip" data-filter="low-sugar">Low Sugar</button>
+                        <button type="button" class="filter-chip" data-filter="high-protein">High Protein</button>
+                        <button type="button" class="filter-chip" data-filter="low-fat">Low Fat</button>
+                    </div>
+
+                    <div class="toolbar-right">
+                        <div class="input-shell">
+                            <select id="algo">
+                                <option value="sugar">น้ำตาลน้อยสุด</option>
+                                <option value="protein">โปรตีนมากสุด</option>
+                                <option value="fat">ไขมันน้อยสุด</option>
+                            </select>
+                        </div>
+
+                        <div class="input-shell">
+                            <select id="brandFilter">
+                                <option value="all">ทุกแบรนด์</option>
+                            </select>
+                        </div>
+
+                        <button id="searchBtn" class="search-btn" type="button" aria-label="ค้นหา">ค้นหา</button>
+                    </div>
+                </div>
+
+                <div id="error"></div>
+                <div id="foods" class="food-grid"></div>
+                <div style="display:flex;justify-content:center;">
+                    <button id="loadMoreBtn" class="load-more-btn" type="button">โหลดเพิ่ม</button>
+                </div>
+            </section>
+
+            <aside class="panel compare-panel">
+                <div class="compare-header">
+                    <h3>เปรียบเทียบ</h3>
+                    <div class="compare-counter" id="compareCount">0</div>
+                </div>
+
+                <div id="compareList" class="compare-list"></div>
+
+                <div class="compare-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="label">รายการ</th>
+                                <th id="compareCol1">-</th>
+                                <th id="compareCol2">-</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compareTableBody"></tbody>
+                    </table>
+                </div>
+            </aside>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-left">
+                <span class="heart">♥</span>
+                <span>FoodCheck</span>
+                <span>|</span>
+                <span>เลือกดูข้อมูลและเปรียบเทียบอาหารที่เหมาะกับคุณ</span>
+            </div>
+
+            <div class="footer-right">
+                <span class="spark">✦</span>
+                <span>Healthy Today</span>
+            </div>
+        </footer>
+    </div>
+
+    <div id="compareToast" class="compare-toast" role="status" aria-live="polite"></div>
+
+    <div id="compareModal" class="compare-modal" onclick="closeCompareModal(event)">
+        <div class="compare-modal-content" onclick="event.stopPropagation()">
+            <div class="compare-modal-header">
+                <h2>เปรียบเทียบสินค้า</h2>
+                <button class="compare-modal-close" type="button" aria-label="ปิด" onclick="closeCompareModal()">×</button>
+            </div>
+            <div class="compare-modal-body">
+                <div id="compareModalGrid" class="compare-modal-grid"></div>
+                <div class="compare-modal-table">
+                    <table>
+                        <thead id="compareModalHead"></thead>
+                        <tbody id="compareModalBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="compare-modal-footer">
+                <button id="combineCompareBtn" type="button">รวมข้อมูล</button>
+                <button id="compareMoreBtn" type="button">Compare More</button>
+                <button id="clearCompareBtn" type="button">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="combineCompareModal" class="compare-modal" onclick="closeCombineCompareModal(event)">
+        <div class="compare-modal-content" onclick="event.stopPropagation()">
+            <div class="compare-modal-header">
+                <h2>ข้อมูลรวมสินค้าที่เลือก</h2>
+                <button class="compare-modal-close" type="button" aria-label="ปิด" onclick="closeCombineCompareModal()">×</button>
+            </div>
+            <div class="compare-modal-body">
+                <div id="combineCompareSummary" class="compare-summary"></div>
+            </div>
+            <div class="compare-modal-footer">
+                <button id="combineCompareCloseBtn" type="button">ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="clearCompareConfirmModal" class="clear-confirm-modal" onclick="closeClearCompareConfirm(event)">
+        <div class="clear-confirm-dialog" onclick="event.stopPropagation()">
+            <h3>ยืนยันการล้างข้อมูล</h3>
+            <p>คุณต้องการล้างรายการสินค้าที่เลือกไว้ทั้งหมดหรือไม่?</p>
+            <div class="clear-confirm-actions">
+                <button type="button" class="cancel-clear" id="cancelClearCompareBtn">ไม่ตกลง</button>
+                <button type="button" class="confirm-clear" id="confirmClearCompareBtn">ตกลง</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal" onclick="closeProductModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="close-btn" type="button" onclick="closeProductModal()">×</button>
+            <div class="modal-body">
+                <img id="modalImage" class="modal-image" src="" alt="รูปสินค้า" />
+                <h2 id="modalName" class="inline-editable" contenteditable="true">ชื่อสินค้า</h2>
+                <div class="meta-row"><strong>แบรนด์:</strong> <span id="modalBrand" class="inline-editable" contenteditable="true">-</span></div>
+                <div class="meta-row"><strong>รสชาติ/สูตร:</strong> <span id="modalFlavor" class="inline-editable" contenteditable="true">-</span></div>
+                <div class="meta-row"><strong>Barcode:</strong> <span id="modalBarcode" class="inline-editable" contenteditable="true">-</span></div>
+                <div class="meta-row"><strong>Nutri-Score:</strong> <span id="modalNutri" class="inline-editable" contenteditable="true">-</span></div>
+                <div class="meta-row"><strong>พลังงาน:</strong> <span><span id="modalEnergy" class="inline-editable" contenteditable="true">0</span> kcal / 100g</span></div>
+                <div class="meta-row"><strong>น้ำตาล:</strong> <span><span id="modalSugar" class="inline-editable" contenteditable="true">0</span> g / 100g</span></div>
+                <div class="meta-row"><strong>ไขมัน:</strong> <span><span id="modalFat" class="inline-editable" contenteditable="true">0</span> g / 100g</span></div>
+                <div class="meta-row"><strong>โปรตีน:</strong> <span><span id="modalProtein" class="inline-editable" contenteditable="true">0</span> g / 100g</span></div>
+                <div class="meta-row"><strong>ส่วนประกอบ:</strong> <span id="modalIngredients" class="inline-editable" contenteditable="true">-</span></div>
+
+                <div class="custom-image-preview-wrap hidden" id="customImagePreviewWrap">
+                    <img id="customImagePreview" class="custom-image-preview" alt="รูปตัวอย่าง" />
+                </div>
+
+                <div class="modal-actions">
+                    <input id="customImageInput" type="file" accept="image/*" hidden />
+                    <button id="changeImageBtn" class="modal-action primary" type="button">เปลี่ยนรูปภาพ</button>
+                    <button id="saveProductInfoBtn" class="modal-action success" type="button">บันทึกข้อมูล</button>
+                    <button id="saveCustomImageBtn" class="modal-action success" type="button" disabled>บันทึกรูปภาพ</button>
+                    <button id="resetCustomImageBtn" class="modal-action ghost" type="button">คืนค่ารูปจาก API</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.write('<script src="/dashboard.js?v=' + Date.now() + '"><\/script>');
+    </script>
+</body>
+
+</html>
+
