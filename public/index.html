@@ -703,7 +703,7 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+            *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
         }
 
         @media (min-width: 701px) {
@@ -1027,6 +1027,10 @@
         .scanner-result-state { min-height: 190px; display: grid; place-items: center; padding: 18px; border-radius: 14px; background: #fff8f1; text-align: center; }
         .scanner-result-state-content { max-width: 340px; color: #8e6c53; }
         .scanner-result-state-icon { display: block; margin-bottom: 7px; color: #c18b62; font-size: 2rem; }
+        .scanner-loading-spinner { display: none; margin-bottom: 7px; color: #a8744e; font-size: 2rem; }
+        .scanner-result-state.is-loading .scanner-result-state-icon { display: none; }
+        .scanner-result-state.is-loading .scanner-loading-spinner { display: block; animation: scanner-spin 1.2s linear infinite; }
+        @keyframes scanner-spin { to { transform: rotate(360deg); } }
         .scanner-result-state strong { display: block; margin-bottom: 4px; color: #765039; font-size: .8rem; }
         .scanner-result-state p { margin: 0; font-size: .67rem; line-height: 1.55; }
         .scanner-status { display: flex; align-items: center; gap: 6px; margin: 9px 0 0; padding: 8px 10px; border-radius: 10px; background: #f6eee7; color: #80634f; font-size: .65rem; line-height: 1.45; }
@@ -1786,6 +1790,7 @@
                             <div class="scanner-result-state" id="scannerResultState">
                                 <div class="scanner-result-state-content">
                                     <span class="scanner-result-state-icon" aria-hidden="true">🐱</span>
+                                    <span class="scanner-loading-spinner" aria-hidden="true">🐾</span>
                                     <strong>รอรูปภาพจากคุณ</strong>
                                     <p>เลือกรูปทางด้านซ้ายแล้วกด “เริ่มวิเคราะห์” เพื่อดูผลจาก AI</p>
                                 </div>
@@ -2612,6 +2617,7 @@
             scannerAnalyzeController = null;
             scannerSelectedFile = file;
             scannerAnalyzeButton.disabled = true;
+            scannerResultState.classList.remove("is-loading");
             scannerResultContent.hidden = true;
             scannerNonCatNotice.hidden = true;
             scannerResultDetails.hidden = false;
@@ -2765,9 +2771,10 @@
             scannerAnalyzeButton.disabled = true;
             scannerStatus.textContent = "กำลังส่งภาพไปวิเคราะห์ด้วย Google Gemini...";
             scannerResultState.hidden = false;
+            scannerResultState.classList.add("is-loading");
             scannerResultContent.hidden = true;
             scannerResultState.querySelector("strong").textContent = "กำลังวิเคราะห์ภาพ";
-            scannerResultState.querySelector("p").textContent = "โปรดรอขณะ AI วิเคราะห์ลักษณะที่มองเห็นในภาพ";
+            scannerResultState.querySelector("p").textContent = "กำลังประมวลผล อาจใช้เวลาประมาณ 2–3 นาที กรุณาอย่าปิดหน้านี้";
             const formData = new FormData();
             formData.append("image", scannerSelectedFile, scannerSelectedFile.name);
 
@@ -2811,6 +2818,7 @@
             } catch (error) {
                 if (error.name === "AbortError") return;
                 if (selectionVersion === scannerSelectionVersion) {
+                    scannerResultState.classList.remove("is-loading");
                     scannerStatus.textContent = error.message || "วิเคราะห์ภาพไม่สำเร็จ กรุณาลองใหม่";
                     scannerResultState.querySelector("strong").textContent = "ยังวิเคราะห์ภาพไม่สำเร็จ";
                     scannerResultState.querySelector("p").textContent = "ตรวจสอบการตั้งค่า AI และการเชื่อมต่อ แล้วลองอีกครั้ง";

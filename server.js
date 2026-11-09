@@ -1201,7 +1201,7 @@ app.post("/api/ai/analyze-cat", (req, res, next) => {
                         }
                     }
                 }),
-                signal: AbortSignal.timeout(45000)
+                signal: AbortSignal.timeout(180000)
             }
         );
 
@@ -1247,7 +1247,7 @@ app.post("/api/ai/analyze-cat", (req, res, next) => {
         });
     } catch (error) {
         if (error.name === "TimeoutError") {
-            return res.status(504).json({ error: "AI ใช้เวลาวิเคราะห์นานเกินไป กรุณาลองใหม่" });
+            return res.status(504).json({ error: "AI ใช้เวลาวิเคราะห์เกิน 3 นาที กรุณาลองใหม่" });
         }
         console.error("Gemini cat-image analysis request failed:", error.message);
         return res.status(502).json({ error: "เชื่อมต่อบริการ AI ไม่สำเร็จ กรุณาลองใหม่" });
