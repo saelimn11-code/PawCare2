@@ -1,7 +1,5 @@
-.env
-.env.*
-!.env.example
 node_modules/
-data/users.json
-data/sessions.json
-data/*.tmp
+.env
+.DS_Store
+dist/
+build/
