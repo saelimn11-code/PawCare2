@@ -22,6 +22,47 @@ function getSortMetric() {
     return ["sugar", "protein", "fat"].includes(value) ? value : "sugar";
 }
 
+async function loadRandomCat() {
+    const image = document.getElementById("catImage");
+    const status = document.getElementById("catStatus");
+    const button = document.getElementById("refreshCatButton");
+    if (!image || !status || !button) return;
+
+    button.disabled = true;
+    status.textContent = "กำลังโหลดรูปแมว...";
+
+    try {
+        const response = await fetch("/api/cat/images?limit=1");
+        if (!response.ok) {
+            throw new Error(`TheCatAPI returned HTTP ${response.status}`);
+        }
+
+        const cats = await response.json();
+        const imageUrl = Array.isArray(cats) && cats[0] && cats[0].url;
+        if (typeof imageUrl !== "string" || !imageUrl.startsWith("https://")) {
+            throw new Error("TheCatAPI response did not contain a valid image URL");
+        }
+
+        image.onload = () => {
+            status.textContent = "รูปภาพจาก TheCatAPI";
+        };
+        image.onerror = () => {
+            console.error("Unable to display the cat image from TheCatAPI.");
+            image.hidden = true;
+            status.textContent = "แสดงรูปแมวไม่สำเร็จ กรุณาสุ่มใหม่";
+        };
+        image.src = imageUrl;
+        image.hidden = false;
+        status.textContent = "กำลังโหลดรูปแมว...";
+    } catch (error) {
+        console.error("Unable to load a cat image from TheCatAPI:", error);
+        image.hidden = true;
+        status.textContent = "โหลดรูปแมวไม่สำเร็จ กรุณาลองใหม่";
+    } finally {
+        button.disabled = false;
+    }
+}
+
 function sortFilteredFoods(items) {
     const cloned = [...items];
     const sorted = cloned.sort((a, b) => {
@@ -1142,9 +1183,15 @@ window.addEventListener("load", async function() {
     const combineCompareCloseBtn = document.getElementById("combineCompareCloseBtn");
     const confirmClearCompareBtn = document.getElementById("confirmClearCompareBtn");
     const cancelClearCompareBtn = document.getElementById("cancelClearCompareBtn");
+    const refreshCatButton = document.getElementById("refreshCatButton");
     const quickSearchButtons = document.querySelectorAll(".quick-search button");
     const filterChips = document.querySelectorAll(".filter-chip");
     const algoSelect = document.getElementById("algo");
+
+    if (refreshCatButton) {
+        refreshCatButton.addEventListener("click", loadRandomCat);
+    }
+    loadRandomCat();
 
     quickSearchButtons.forEach((button) => {
         button.dataset.label = button.dataset.label || button.textContent.trim().replace(/\s+\d+$/, "");
